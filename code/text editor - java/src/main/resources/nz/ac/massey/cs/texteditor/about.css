@@ -1,0 +1,21 @@
+BorderPane {
+	-fx-background-image: url("about.png");
+	-fx-background-size: 380;
+	-fx-padding: 60px;
+}
+
+VBox {
+	-fx-alignment: center;
+	-fx-spacing: 20px;
+	-fx-background-color: rgba(0, 0, 0, 0.7);
+	-fx-background-radius: 20;
+}
+
+Label {
+	-fx-text-fill: white;
+	-fx-font-size: 13px;
+}
+
+Button {
+	-fx-padding: 5px 25px 5px 25px;
+}

@@ -1,0 +1,82 @@
+<html>
+
+<script type="text/javascript" src="../Common/gl-matrix-min.js"></script>
+<script type="text/javascript" src="../Common/webgl-utils.js"></script>
+<script type="text/javascript" src="../Common/initShaders.js"></script>
+
+<script id="vertex-shader" type="x-shader/x-vertex">
+    attribute vec3 aVertexPosition;
+    attribute vec3 aVertexNormal;
+    attribute vec2 aTextureCoord;
+
+    uniform mat4 uMVMatrix;
+    uniform mat4 uPMatrix;
+	
+	varying vec3 mvPosition;
+	varying vec3 mvNormal;
+    varying vec2 vTextureCoord;
+
+    void main(void)
+    {
+        mvPosition = vec3(uMVMatrix * vec4(aVertexPosition, 1.0));
+		mvNormal = mat3(uMVMatrix) * aVertexNormal;
+        gl_Position = uPMatrix * vec4(mvPosition, 1.0);
+        vTextureCoord = aTextureCoord;
+    }
+</script>
+
+<script id="fragment-shader" type="x-shader/x-fragment">
+    precision mediump float;
+
+    varying vec2 vTextureCoord;
+    uniform sampler2D uSampler;
+	
+	varying vec3 mvPosition;
+	varying vec3 mvNormal;
+	
+	uniform vec3 ambientProduct, diffuseProduct;
+	uniform vec3 lightPosition;
+	
+	uniform vec3 shadowObject;
+	uniform float shadowRadius;
+
+    void main(void)
+    {	
+		vec3 fColor = ambientProduct;
+		
+		// work out different vectors
+		// light to current fragment
+		vec3 lightVec = lightPosition - mvPosition;
+		// light to the centre of object casting the shadow
+		vec3 shadowVec = lightPosition - shadowObject;
+		// light to the edge of object casting the shadow
+		vec3 shadowEdge = lightPosition - (shadowObject + shadowRadius);
+		
+		// cos of angles between vectors
+		float cosShadow = dot(normalize(lightVec), normalize(shadowVec));
+		float cosShadowEdge = dot(normalize(shadowVec), normalize(shadowEdge));
+		
+		// checks to see if current fragment should be in shadow or not
+		// the first is to make sure the shadow object is not on the far side of the current fragment
+		// the second is to see if the current fragment is in the shadow cone
+		if (length(lightVec) < length(shadowVec) || cosShadow <= cosShadowEdge) {
+			float cosLight = dot(normalize(lightVec), normalize(mvNormal));
+			if (cosLight > 0.0) {
+				vec3 reflectColor = diffuseProduct * cosLight;
+				fColor += reflectColor / (0.5 + 0.5 * dot(lightVec, lightVec));
+			}
+		}
+		
+        gl_FragColor = vec4(fColor, 1.0) * texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
+    }
+</script>
+
+<script type="text/javascript" src="globe.js"></script>
+
+<body>
+	<div> <button onclick="center=!center">Toggle camera</button> </div>
+    <canvas id="canvas" style="border: none;" width="500" height="500"></canvas>
+	<p> Start Chrome with --allow-file-access-from-files <p>
+</body>
+
+</html>

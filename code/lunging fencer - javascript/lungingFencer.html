@@ -1,0 +1,396 @@
+<html>
+<head>
+<title>Fencer lunging</title>
+<style>canvas { width: 100%; height: 100% }</style>
+</head>
+<body>
+<script src="js/three.js"></script>
+<script>
+	var scene = new THREE.Scene();
+    scene.name = "Salle d'armes";
+	scene.rotates = false;
+	var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 1, 10000);
+	var renderer = new THREE.WebGLRenderer();
+	renderer.setSize(window.innerWidth, window.innerHeight);
+	document.body.appendChild(renderer.domElement);
+
+	function newBodyPart(name, width, height, depth, rotates) {
+        if (rotates)
+            var bodyPart = Object.create(new THREE.Object3D());
+        else{
+			var geometry = new THREE.BoxGeometry(width, height, depth);
+			var material = new THREE.MeshNormalMaterial({wireframe : true });
+			var bodyPart = new THREE.Mesh(geometry, material);  
+            }
+		bodyPart.name = name;
+        bodyPart.rotates = rotates;
+		bodyPart.offset = function(node, xFraction, yFraction, zFraction){
+        /* Offsets this body part in fractions of the dimensions of the parameter "node".
+           So if node has width 10, height 4, and depth 7, and the fraction parameters are
+           0.5, 0.5, 0.5, then this body part will be offset 5, 2, and 3.5 in x, y and z
+           which would put it at one of the coners of node
+        */
+		    var xOffset = 0;
+			var yOffset = 0;
+			var zOffset = 0;
+			xOffset = xFraction * node.geometry.parameters.width;
+			yOffset = yFraction * node.geometry.parameters.height;
+			zOffset = zFraction * node.geometry.parameters.depth;
+			/*alert( "called offset with fractional offsets (" + xFraction + ", " + yFraction + ", " + zFraction + ") "
+                 + "and absolute offsets of (" + xOffset  + ", " + yOffset + ", " + zOffset
+				 );
+            */
+			this.position.x += xOffset;
+			this.position.y += yOffset;
+			this.position.z += zOffset;
+		    }				
+        return(bodyPart);
+    }
+
+// MAKE THE BODY PARTS AND JOINTS
+
+                                                                       var backFoot      = newBodyPart ( "Back foot",  0.25, 0.25, 0.75, false);  
+    var backAnkle     = newBodyPart("Back ankle"    , 0, 0, 0, true);  var backCalf      = newBodyPart ( "Back calf",  0.25,    1, 0.25, false); 
+	var backKnee      = newBodyPart("Back knee"     , 0, 0, 0, true);  var backThigh     = newBodyPart ( "Back thigh", 0.35,    1, 0.35, false);	
+	var backHip       = newBodyPart("Back hip"      , 0, 0, 0, true);  var torso         = newBodyPart ( "torso",       0.6,    1,  0.4, false); 
+    var neck          = newBodyPart("neck"          , 0, 0, 0, true);  var realNeck      = newBodyPart ( "Real neck",   0.3,  0.3,  0.2, false);
+            	                                                       var head          = newBodyPart ( "Head",        0.4,  0.5, 0.35, false);	
+	var frontHip      = newBodyPart("Front hip"     , 0, 0, 0, true);	
+	var frontHip2     = newBodyPart("Front hip 2"   , 0, 0, 0, true);  var frontThigh   = newBodyPart ( "Front thigh", 0.35,    1, 0.35, false); 
+	var frontKnee     = newBodyPart("Front knee"    , 0, 0, 0, true);  var frontCalf    = newBodyPart ( "Front calf",  0.25,    1, 0.25, false); 
+	var frontAnkle    = newBodyPart("Front ankle"   , 0, 0, 0, true);  var frontFoot    = newBodyPart ( "Front foot",  0.25, 0.25, 0.75, false);
+
+	var backShoulder  = newBodyPart("Back shoulder" , 0, 0, 0, true);  var backBicep    = newBodyPart ( "Back bicep",  0.25,    1, 0.25, false);
+	var backElbow     = newBodyPart("Back elbow"    , 0, 0, 0, true);  var backForearm  = newBodyPart ( "Back forearm", 0.2,  0.7,  0.2, false);
+	var backWrist	  = newBodyPart("Back wrist"    , 0, 0, 0, true);  var backHand     = newBodyPart ( "Back hand",    0.3,  0.3,  0.1, false);
+
+	var frontShoulder = newBodyPart("Front shoulder", 0, 0, 0, true);  var frontBicep   = newBodyPart ("Front bicep",  0.25,    1, 0.25, false);
+	var frontElbow	  = newBodyPart("Front elbow"   , 0, 0, 0, true);  var frontForearm = newBodyPart ("Front forearm", 0.2,  0.7,  0.2, false);
+	var frontWrist    = newBodyPart("Front wrist"   , 0, 0, 0, true);  var frontHand    = newBodyPart ("Front hand",    0.3,  0.3,  0.1, false);
+	var frontFingers  = newBodyPart("Front fingers" , 0, 0, 0, true);  var handle       = newBodyPart ("Handle",       0.07,  0.6, 0.07, false);
+	
+	var bladeJoint    = newBodyPart("Blade joint"   , 0, 0, 0, true);  var blade        = newBodyPart ("Blade",        0.02,  2.0, 0.02, false);
+	var pommelJoint   = newBodyPart("Pommel joint"  , 0, 0, 0, true);  var pommel       = newBodyPart ("Pommel",        0.1,  0.1,  0.1, false);
+	var tangJoint     = newBodyPart("Tang joint"    , 0, 0, 0, true);  var tang         = newBodyPart ("Tang",         0.01,  0.6, 0.01, false);
+	var coquilleJoint = newBodyPart("Coquille joint", 0, 0, 0, true);  var coquille     = newBodyPart ("Coquille",      0.2, 0.02,  0.2, false);
+	
+// CONNECT THEM TOGETHER
+	
+	scene          . add (backFoot    );	backFoot      . add (backAnkle    ); 
+    backAnkle      . add (backCalf    );	backCalf      . add (backKnee     );
+	backKnee       . add (backThigh   );	backThigh     . add (backHip      );
+    backHip        . add (torso       );    torso         . add (neck         );
+	neck           . add (realNeck    );
+	realNeck       . add (head        );
+
+	neck           . add (head        );    torso         . add (frontHip     );
+	frontHip       . add (frontHip2   );
+	frontHip2      . add (frontThigh  );	frontThigh    . add (frontKnee    );
+	frontKnee      . add (frontCalf   );    frontCalf     . add (frontAnkle   );
+	frontAnkle     . add (frontFoot   );   
+    			                            torso         . add (backShoulder );
+    backShoulder   . add (backBicep   );    backBicep     . add (backElbow    );
+    backElbow      . add (backForearm );    backForearm   . add (backWrist    );
+	backWrist      . add (backHand    );  
+	
+				                            torso          . add (frontShoulder );
+    frontShoulder  . add (frontBicep   );   frontBicep     . add (frontElbow    );
+    frontElbow     . add (frontForearm );   frontForearm   . add (frontWrist    );
+	frontWrist     . add (frontHand    );   frontHand      . add (frontFingers  );
+	
+	frontFingers   . add (handle       );
+	handle         . add (bladeJoint   );   bladeJoint     . add (blade         );
+	handle         . add (pommelJoint  );   pommelJoint    . add (pommel        );
+	handle         . add (tangJoint    );   tangJoint      . add (tang          );
+	handle         . add (coquilleJoint);   coquilleJoint  . add (coquille      );
+
+// POSE THEM
+	
+                                                            backFoot       . offset  (backFoot    , -30,     1,    0);   	
+    backAnkle     .offset (backFoot    ,    0,  0.5, 0.5 );	backCalf       . offset  (backCalf    ,   0,   0.5, -0.5);	
+	backKnee      .offset (backCalf    ,    0,  0.5,   0 );	backThigh      . offset  (backThigh   ,   0,   0.5,    0);	    
+	backHip       .offset (backThigh   ,    0,  0.5,   0 );	torso          . offset  (torso       , 0.3,   0.5,    0);  
+
+	neck          .offset (torso       ,    0,  0.5, 0.25); realNeck       . offset  (realNeck    ,   0,   0.5,    0); 
+                                                            head           . offset  (head        ,   0,  0.75,-0.25);  	
+    frontHip      .offset (torso       ,  0.3, -0.5,   0 );	
+	frontHip2     .offset (torso       ,    0,    0,   0 );
+	                                                          frontThigh   . offset  (frontThigh  ,   0,  -0.5,    0);      
+	frontKnee     .offset (frontThigh  ,    0, -0.5,   0 );   frontCalf    . offset  (frontCalf   ,   0,  -0.5,    0);
+	frontAnkle    .offset (frontCalf   ,    0, -0.5, 0.5 );   frontFoot    . offset  (frontFoot   ,   0,    -1, -0.5);
+
+    backShoulder  .offset(torso        , -0.5,  0.5,   0 );   backBicep    . offset  (backBicep   , -0.5, -0.5,    0);
+    backElbow     .offset(backBicep    ,    0, -0.5,   0 );   backForearm  . offset  (backForearm ,   0,  -0.5,    0);
+    backWrist     .offset(backForearm  ,    0, -0.5,   0 );   backHand     . offset  (backHand    ,   0,  -0.5,    0)
+
+    frontShoulder .offset(torso        ,  0.5,  0.5,   0 );   frontBicep   . offset  (frontBicep  , 0.5,  -0.5,    0);
+    frontElbow    .offset(frontBicep   ,    0, -0.5,   0 );   frontForearm . offset  (frontForearm,   0,  -0.5,    0);
+    frontWrist    .offset(frontForearm ,    0, -0.5,   0 );   frontHand    . offset  (frontHand   ,   0,  -0.5,    0);
+    frontFingers  .offset(frontHand    ,    0, -0.5,   0 );   handle       . offset  (handle      ,   0,   0.2,    0);
+	
+	pommelJoint   .offset(handle       ,    0,  0.5,   0 );   pommel       . offset  (pommel      ,   0,   0.5,    0);
+	coquilleJoint .offset(handle       ,    0, -0.5,   0 );   coquille     . offset  (coquille    , 0.5,  -0.5,    0);
+	tangJoint     .offset(handle       ,    0,  0.5,   0 );   tang         . offset  (tang        ,   0,  -0.5,    0);
+	bladeJoint    .offset(handle       ,    0, -0.5,   0 );   blade        . offset  (blade       ,   0,  -0.5,    0);
+
+// SPECIFY THE START AND END ANGLES FOR THE INTERPOLATION
+
+    scene         . startRotation    = [    0,    0,    0 ];    scene         . endRotation = [   0,    3,     0];
+    backAnkle     . startRotation    = [    0,    0,  -0.2];    backAnkle     . endRotation = [   0,    0,  -1.2]; 
+    backKnee      . startRotation    = [  0.2,    0,     0];    backKnee      . endRotation = [   0,    0,     0];
+    backHip       . startRotation    = [ -0.3,    0,   0.3];    backHip       . endRotation = [ 0.2,    0,   1.2];
+    neck          . startRotation    = [    0,  0.3,     0];    neck          . endRotation = [   0,  0.3,     0]; 
+    frontHip      . startRotation    = [    0, -1.3,     0];    frontHip      . endRotation = [   0, -1.3,     0];
+    frontHip2     . startRotation    = [  0.4,    0,     0];    frontHip2     . endRotation = [ 1.95,    0,    0];
+    frontKnee     . startRotation    = [ -0.3,    0,     0];    frontKnee     . endRotation = [ -1.9,   0,     0];
+    frontAnkle    . startRotation    = [ -0.2,    0,     0];    frontAnkle    . endRotation = [-0.1,    0,     0];   
+    backShoulder  . startRotation    = [   0,     0,  -0.5];    backShoulder  . endRotation = [   0,    0,  -1.5];
+	backElbow     . startRotation    = [    0,    0,  -1.8];    backElbow     . endRotation = [   0,    0,     0];
+    backWrist     . startRotation    = [    0,    0,  -1.5];    backWrist     . endRotation = [   0,    0,     0];
+    frontShoulder . startRotation    = [    0,    0,   0.5];    frontShoulder . endRotation = [   0,    0,   1.7];
+    frontElbow    . startRotation    = [    0,    0,   1.2];    frontElbow    . endRotation = [   0,    0,     0];
+    frontWrist    . startRotation    = [    0,    0,     0];    frontWrist    . endRotation = [   0,    0,   1.5];
+    frontFingers  . startRotation    = [    0,    0,   0.1];    frontFingers  . endRotation = [   0,    0,     0];
+	
+	bladeJoint    . startRotation    = [    0,    0,     0];    bladeJoint    . endRotation = [   0,    0,     0];
+	pommelJoint   . startRotation    = [    0,    0,     0];    pommelJoint   . endRotation = [   0,    0,     0];
+	tangJoint     . startRotation    = [    0,    0,     0];    tangJoint     . endRotation = [   0,    0,     0]; tangJoint     . endFlopRotation = [0, 0, 0];
+	coquilleJoint . startRotation    = [    0,    0,     0];    coquilleJoint . endRotation = [   0,    0,     0]; coquilleJoint . endFlopRotation = [0, 0, 0];
+	
+	bladeJoint    . startPosition    = [0,       bladeJoint.position.y, 0];  bladeJoint    . startWorldPosition = [0, 0, 0];  bladeJoint    . endWorldPosition = [0, 0, 0];
+	pommelJoint   . startPosition    = [0,      pommelJoint.position.y, 0];  pommelJoint   . startWorldPosition = [0, 0, 0];  pommelJoint   . endWorldPosition = [0, 0, 0];
+	tangJoint     . startPosition    = [0,        tangJoint.position.y, 0];  tangJoint     . startWorldPosition = [0, 0, 0];  tangJoint     . endWorldPosition = [0, 0, 0];
+	coquilleJoint . startPosition    = [-0.1, coquilleJoint.position.y, 0];  coquilleJoint . startWorldPosition = [0, 0, 0];  coquilleJoint . endWorldPosition = [0, 0, 0];
+
+
+	var geometry = new THREE.BoxGeometry(20, 0.2, 4, 10, 10, 10);
+	var material = new THREE.MeshBasicMaterial({color: 0xfffff, wireframe: false});
+	var piste = new THREE.Mesh(geometry, material);
+    piste.name = "piste";
+	piste.rotates = false;
+	scene.add(piste);
+
+	camera.position.z = 10;
+	camera.position.y = 1;
+	camera.position.x = 0;
+
+	function intermediateValue(startTime, duration, startValue, endValue, level){
+		var val = ((new Date().getTime() - startTime) / duration) % 6;
+		
+		if (val >= 5) {
+			//reverse cos
+			var target = (Math.cos(Math.PI - val * Math.PI ) + 1)/2;
+			var intermediateValue = startValue + target * (endValue - startValue);
+			return intermediateValue;
+		}
+		else if (val >= 1) {
+			return endValue;
+		}
+		else {
+			var target = (Math.cos( val * Math.PI - Math.PI) + 1)/2;
+			var intermediateValue = startValue + target * (endValue - startValue);
+			return intermediateValue;
+		}
+	}
+	
+	//need to pass boolean in function not just value
+	var bladeAttached    = {value: true};
+	var pommelAttached   = {value: true};
+	var tangAttached     = {value: true};
+	var coquilleAttached = {value: true};
+	
+	function fall(startTime, duration, startValue, startWorldValue, endWorldValue, joint, attached, startFall, endY, endRot, flop, endFlopRot) {
+		var val = ((new Date().getTime() - startTime) / duration) % 6;
+		var fallDuration = 0.35;
+		
+		if (val >= 5) {
+			//node needs to be reattached to handle
+			if (!attached.value) {
+				handle.attach(joint);
+				attached.value = true;
+			}
+			//ends attached to handle
+			return startValue;
+		}
+		else if (val >= startFall + fallDuration) {
+			//node has fallen so stays fallen
+			return endWorldValue;
+		}
+		else if (val >= startFall) {
+			//node should be falling so if its attached boolean is true it needs to be detached from the handle, only occurs once per lunge
+			if (attached.value) {
+				//detach from handle and attach to scene, update boolean
+				scene.attach(joint);
+				attached.value = false;
+				//get position now node is in world space and set start and end world positions for keyframes.
+				var pos = joint.position;
+				joint.startWorldPosition = [pos.x, pos.y, pos.z];
+				joint.endWorldPosition = [pos.x, endY, pos.z];
+				//current world values need to be updated now its in world coordinates, always happens on x so can just set them
+				startWorldValue = pos.x;
+				endWorldValue = pos.x;
+				//same for rotation
+				var rot = joint.rotation;
+				joint.startRotation = [rot.x, rot.y, rot.z];
+				joint.endRotation = [rot.x, rot.y, endRot];
+				//if the node flops it needs the endFlopRotation too
+				if (flop) {
+					joint.endFlopRotation = [rot.x, rot.y, endFlopRot];
+				}
+			}
+			//node has been detached so falls to the floor
+			var target = 8 * Math.pow(val - startFall, 2);
+			return startWorldValue + target * (endWorldValue - startWorldValue);
+		}
+		else {
+			//start position while attached to handle
+			return startValue;
+		}
+	}
+	
+	function rotate(startTime, duration, startValue, endValue, startRot, flop, endFlopValue) {
+		var val = ((new Date().getTime() - startTime) / duration) % 6;
+		var fallDuration = 0.35; //also flop duration
+		
+		if (val >= 5) {
+			//end attached to handle
+			return 0;
+		}
+		else if (flop && val >= startRot + 2 * fallDuration) {
+			//finished flop so stays flopped
+			return endFlopValue;
+		}
+		else if (val >= startRot + fallDuration) {
+			if (flop) {
+				//fall over if flop is true
+				var target = 8 * Math.pow(val - (startRot + fallDuration), 2);
+				return endValue + target * (endFlopValue - endValue);
+			}
+			else {
+				//doesnt fall so just stays flat
+				return endValue;
+			}
+		}
+		else if (val >= startRot) {
+			//rotates to flat when falling
+			return startValue + (val - startRot) * (endValue - startValue) * 2;;
+		}
+		else {
+			//start attached to handle
+			return 0;
+		}
+	}
+	
+	function wristRotate(startTime, duration, startValue, endValue){
+		var val = ((new Date().getTime() - startTime) / duration) % 6;
+		
+		if (val >= 3.5) {
+			//end flat
+			return startValue;
+		}
+		else if (val >= 3.0) {
+			//rotates wrist back to flat
+			return startValue + (3.5 - val) * (endValue - startValue) * 2;
+		}
+		else if (val >= 2.0) {
+			//stays upwards
+			return endValue;
+		}
+		else if (val >= 1.5) {
+			//rotates wrist from flat to upwards
+			return startValue + (val - 1.5) * (endValue - startValue) * 2;
+		}
+		else  {
+			//start flat
+			return startValue;
+		}
+	}
+	
+	function fallAndRotate(node, startTime, duration, joint, attached, startFall, endY, endRot, flop, endFlopRot) {
+		//even though only the y position and z rotation are modified, this way could easily handle all axis position and rotation with very little modification.
+		node.position.x = fall(startTime, duration, node.startPosition[0], node.startWorldPosition[0], node.endWorldPosition[0], joint, attached, startFall, endY, endRot, flop, endFlopRot);
+		node.position.y = fall(startTime, duration, node.startPosition[1], node.startWorldPosition[1], node.endWorldPosition[1], joint, attached, startFall, endY, endRot, flop, endFlopRot);
+		node.position.z = fall(startTime, duration, node.startPosition[2], node.startWorldPosition[2], node.endWorldPosition[2], joint, attached, startFall, endY, endRot, flop, endFlopRot);
+
+		if (flop) {
+			node.rotation.x = rotate(startTime, duration, node.startRotation[0], node.endRotation[0], startFall, flop, node.endFlopRotation[0]);
+			node.rotation.y = rotate(startTime, duration, node.startRotation[1], node.endRotation[1], startFall, flop, node.endFlopRotation[1]);
+			node.rotation.z = rotate(startTime, duration, node.startRotation[2], node.endRotation[2], startFall, flop, node.endFlopRotation[2]);
+		}
+		else {
+			node.rotation.x = rotate(startTime, duration, node.startRotation[0], node.endRotation[0], startFall, flop, 0);
+			node.rotation.y = rotate(startTime, duration, node.startRotation[1], node.endRotation[1], startFall, flop, 0);
+			node.rotation.z = rotate(startTime, duration, node.startRotation[2], node.endRotation[2], startFall, flop, 0);
+		}
+	}
+
+    function update(node, nodesToUpdate, level) {
+        //alert("level: " + level + ". Potentially updating " + node.name + " at level " + level);
+//        alert("updating " + node.name + " " + node.rotates);
+		if (node !== undefined) {
+			if  (node.rotates) {
+				if (nodesToUpdate.has("all") || nodesToUpdate.has(node) ) {	
+					//nodes that fall have their specifc animations
+					if (node.name == "Blade joint") {
+						fallAndRotate(node, startTime, duration, bladeJoint, bladeAttached, 1, 0.12, 1.582, false, 0);
+					}
+					else if (node.name == "Pommel joint") {
+						fallAndRotate(node, startTime, duration, pommelJoint, pommelAttached, 2, 0.2, -Math.PI, false, 0);
+					}
+					else if (node.name == "Tang joint") {
+						fallAndRotate(node, startTime, duration, tangJoint, tangAttached, 2, 0.21, -Math.PI, true, -1.4);
+					}
+					else if (node.name == "Coquille joint") {
+						fallAndRotate(node, startTime, duration, coquilleJoint, coquilleAttached, 3.5, 0.12, 1.582, true, Math.PI);
+					}
+					else if (node.name == "Front wrist") {
+						node.rotation.x = wristRotate(startTime, duration, node.startRotation[0], node.endRotation[0]);
+						node.rotation.y = wristRotate(startTime, duration, node.startRotation[1], node.endRotation[1]);
+						node.rotation.z = wristRotate(startTime, duration, node.startRotation[2], node.endRotation[2]);
+					}
+					else {
+						node.rotation.x = intermediateValue(startTime, duration, node.startRotation[0], node.endRotation[0], level);
+						node.rotation.y = intermediateValue(startTime, duration, node.startRotation[1], node.endRotation[1], level);
+						node.rotation.z = intermediateValue(startTime, duration, node.startRotation[2], node.endRotation[2], level);
+					}
+				}
+				else {
+					node.rotation.x = node.startRotation[0];
+					node.rotation.y = node.startRotation[1];
+					node.rotation.z = node.startRotation[2];
+					 }
+				}
+			var childTally = node.children.length;
+			if (childTally > 0) {
+				var listOfChildren = "";
+				for (var i = 0; i < childTally; i++) {
+					listOfChildren = listOfChildren + node.children[i].name + ", " ;
+					}
+	//            alert("level: " + level + ". Node " + node.name + " has these children: " + listOfChildren);
+				for (var i = 0; i < childTally; i++) {
+					var child = node.children[i];
+	//                alert("level: " + level + ". child has X rotation " + child.rotation.x);
+	//                alert("level: " + level + ". recursive call to level " + (level + 1) + " to update " + child.name);
+					update(child, nodesToUpdate, level + 1);
+					}
+				}
+			}
+        }
+
+	var startTime = new Date().getTime();
+	var duration  = 2000;
+
+    var nodesToUpdate = new Set();
+    nodesToUpdate.add("all");
+
+	function render() {
+		requestAnimationFrame(render);
+        scene.rotation.y +=0.005;		
+		var axis = new THREE.Vector3(1, 0, 0).normalize();
+        update(scene, nodesToUpdate, 0);
+		renderer.render(scene, camera);
+		};
+	render();
+</script>
+</body>
+</html>

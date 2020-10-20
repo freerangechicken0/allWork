@@ -1,0 +1,31 @@
+.menu-bar {
+	-fx-padding: 0px;
+}
+
+.menu-button .label {
+	-fx-text-fill: black;
+}
+
+.menu-button:hover {
+	-fx-background-color: #91c9f7;
+}
+
+.menu-button:showing {
+	-fx-background-color: #91c9f7;
+}
+
+.context-menu {
+	-fx-padding: 3px;
+}
+
+.menu-item {
+	-fx-padding: 5px 10px 5px 15px;
+}
+
+.menu-item:focused {
+	-fx-background-color: #91c9f7;
+}
+
+.menu-item .label {
+	-fx-text-fill: black;
+}

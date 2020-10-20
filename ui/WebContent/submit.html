@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="description" content="Submission Form for Community Reviews">
+<meta name="keywords" content="Video,Game,Games,News,Reviews,Aqueous,Submit,Submission,Form,Review,Community">
+<meta name="author" content="Sam Wood">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="HTML-Validation" content="https://validator.w3.org/nu/?doc=https%3A%2F%2Fseat-webdev.massey.ac.nz%2Fsite1193%2F158258%2Fsubmit.html">
+<meta name="CSS-Validation" content="https://jigsaw.w3.org/css-validator/validator?uri=https%3A%2F%2Fseat-webdev.massey.ac.nz%2Fsite1193%2F158258%2Fstyle.css&profile=css3svg&usermedium=all&warning=1&vextwarning=&lang=en">
+<title>Submit</title>
+<link href="style.css" rel="stylesheet" type="text/css" />
+<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro&display=swap" rel="stylesheet">
+<link href="favicon.png" rel="icon" type="image/png"/>
+
+</head>
+<body>
+	<div class="header">
+		<div class="logo">
+			<a href="index.html"><img class="img-logo" src="aqueous_logo_side.png" alt="Aqueous Logo"></a>
+		</div>
+	</div>
+	
+	<div id="navbar">
+		<a href="index.html">Home</a>
+		<a href="news.html">News</a>
+		<a href="reviews.html">Reviews</a>
+		<a href="about.html">About</a>
+	</div>
+	
+	<div class="page">
+		<div class="submit-content">
+			<div class="home-top">
+				<h1>Submit Your Review</h1>
+				<p>We love our community and one of the way we interact with you is by accepting review submissions.
+				<br/>Our editors will format and edit your submissions, and providing they're up to our standards, post them.</p>
+			</div>
+			<hr>
+			<form name="submission" id="submission" action="submit.html" method="post">
+				<div class="details-form">
+					<label for="firstname">First Name: </label>
+					<input type="text" name="firstname" id="firstname" required>
+					
+					<label for="lastname">Last Name: </label>
+					<input type="text" name="lastname" id="lastname" required>
+					
+					<label for="game">Game: </label>
+					<input type="text" name="game" id="game" required>
+					
+					<label for="rating">Rating: </label>
+					<input type="number" name="rating" id="rating" min="0" max="10" step="0.5" required>
+					
+					<label for="email">Email: </label>
+					<input type="email" name="email" id="email" required>
+				<div class="form-submit">
+					<input type="submit" value="Submit">
+				</div>
+				</div>
+				<div class="review-form">
+					<label for="review">Your Review: </label>
+					<textarea id="review" name="review"></textarea>
+				</div>
+			</form>
+			<hr class="submit-hr">
+		</div>
+	</div>
+	
+	<div class="footer">
+		<p>Aqueous Reviews
+		<br/>Email: <a>contact@aqueous.com</a>
+		<br/>Phone: +64 0800 838 383
+		<br/>Facebook: Aqueous Reviews
+		<br/>
+		<br/>Aqueous Reviews All rights reserved</p>
+	</div>
+	
+	<script src="scroll.js"></script>
+	
+</body>
+</html>

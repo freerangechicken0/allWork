@@ -1,0 +1,334 @@
+@charset "UTF-8";
+
+html, body {
+	margin: 0;
+	padding: 0;
+}
+
+html {
+	background-color: #F5F5F5;
+}
+
+body {
+	font-family: 'Source Sans Pro', sans-serif;
+	color: black;
+	text-align: center;
+	font-size: 22px;
+}
+
+.header {
+	background-color: #333;
+}
+
+.logo {
+	padding: 10px;
+}
+
+#navbar {
+	overflow: hidden;
+	background-color: #444;
+	z-index: 1;
+}
+
+#navbar a {
+	display: inline;
+	padding: 14px;;
+	text-decoration: none;
+	width: 10%;
+	color: white;
+}
+
+#navbar a:visited {
+	color: white;
+}
+
+#navbar a:hover {
+	background-color: #D1D1D1;
+	color: black;
+}
+
+.sticky + .page {
+	padding-top: 80px;
+}
+
+.sticky {
+	position: fixed;
+	top: 0;
+	width: 100%;
+}
+
+.page {
+	padding: 50px 0px 50px 0px;
+}
+
+.content {
+	float: left;
+	width: 75%;
+}
+
+.column {
+	width: 21.5%;
+	float: left;
+	display: block;
+	font-size: 18px;
+}
+
+.home-link a {
+	color: black;
+}
+
+.recent {
+	padding-right: 20px;
+	border: 2px solid #333;
+}
+
+.recent h2 {
+	padding-left:20px;
+}
+
+.recent ul {
+	overflow: hidden;
+	display: block;
+}
+
+.recent li {
+	text-align: left;
+}
+
+.recent a {
+	text-decoration: none;
+	color: black;
+}
+
+.recent a:visited {
+	text-decoration: none;
+	color: black;
+}
+
+.recent a:hover {
+	text-decoration: underline;
+}
+
+.submit {
+	padding: 20px 0 20px 0;
+}
+
+.submit-button {
+	display: inline-block;
+	width: 80%;
+	border: 2px solid #444;
+	border-radius: 20px;
+	color: black;
+}
+
+.submit-content {
+	width: 100%;
+}
+
+form {
+	width: 100%;
+}
+
+.details-form {
+	float: left;
+	width: 30%;
+	margin-bottom: 20px;
+}
+
+.details-form label {
+	display: block;
+}
+
+
+.details-form input {
+	display: inline;
+	width: 60%;
+}
+
+.form-submit {
+	padding-top: 20px;
+}
+
+.review-form {
+	float: left;
+	width: 60%;
+	padding: 0 3% 0 3%;
+	margin: 0 0 40px 0;
+}
+
+.review-form textarea {
+	resize: none;
+	height: 400px;
+	width: 100%;
+}
+
+input {
+	display: table-cell;
+}
+
+.submit-button:hover {
+	box-shadow: 5px 5px 10px #888, -5px -5px 10px #888,
+	5px -5px 10px #888, -5px 5px 10px #888;
+}
+
+.iframe-container {
+	position: relative;
+	width: 100%;
+	padding-bottom: 56.25%;
+	height: 0;
+}
+
+.iframe-container iframe {
+	position: absolute;
+	top: 0;
+	left: 5%;
+	width: 90%;
+	height: 90%;
+}
+
+.contact {
+	width: 100%;
+}
+
+.office , .staff {
+	float: left;
+	width: 50%;
+}
+
+.staff-member {
+	width: 80%;
+	padding-left: 10%;
+	text-align: left;
+}
+
+.map-container {
+	position: relative;
+	width: 100%;
+	padding-bottom: 100%;
+	height: 0;
+}
+
+.map-container iframe {
+	position: absolute;
+	top: 0;
+	left: 10%;
+	width: 80%;
+	height: 80%;
+}
+
+.home-top , .news-top , .review-top , .about {
+	padding: 0 10px 20px 10px;
+}
+
+.review {
+	width: 80%;
+	display: inline-block;
+	box-shadow: 5px 5px 10px #888, -5px -5px 10px #888,
+	5px -5px 10px #888, -5px 5px 10px #888;
+	color: black;
+}
+
+.review:hover {
+	box-shadow: 5px 5px 30px #888, -5px -5px 30px #888,
+	5px -5px 30px #888, -5px 5px 30px #888;
+}
+
+.review a , .content a {
+	text-decoration: none;
+}
+
+.review a:visited , .content a:visited {
+	color: black;
+}
+
+.review-content {
+	padding: 0 10% 0 10%;
+}
+
+.review-content p {
+	text-align: left;
+}
+
+.pc-table {
+	width: 100%;
+}
+
+.news h3 {
+	padding: 0 10% 0 10%;
+}
+
+.news p {
+	text-align: left;
+	padding: 0 10% 0 10%;
+}
+
+.news a {
+	color: blue;
+}
+
+.news a:visited {
+	color: blue;
+}
+
+.news a:hover {
+	text-decoration: underline;
+}
+
+.footer {
+	float: left;
+	width: 100%;
+	background-color: #333;
+	color: white;
+	font-size: 18px;
+}
+
+.img-logo {
+	width: 40%;
+}
+
+.img-70 {
+	width: 70%;
+}
+
+.gif {
+	width: 60%;
+}
+
+hr {
+	margin-top: 40px;
+	margin-bottom: 40px;
+	width: 90%;
+}
+
+.submit-hr {
+	margin-bottom: 0;
+}
+
+.staff hr {
+	margin-top: 20px;
+	margin-bottom: 20px;
+	width: 85%;
+}
+
+@media screen and (max-width: 800px) {
+	.content , .office , .staff , .details-form , .column {
+		width: 100%;
+	}
+	.review {
+		width: 85%;
+	}
+	.recent {
+		width: 70%;
+		display: inline-block;
+	}
+	.submit-button {
+		width: 60%;
+	}
+	.gif {
+		width: 90%;
+	}
+	.review-form {
+		width: 80%;
+		padding: 0 10% 0 10%;
+	}
+}

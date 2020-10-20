@@ -1,0 +1,8 @@
+BorderPane {
+	-fx-padding: 10px;
+}
+
+GridPane {
+	-fx-alignment: center;
+	-fx-vgap: 10px;
+}
